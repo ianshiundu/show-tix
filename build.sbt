@@ -1,3 +1,5 @@
+enablePlugins(JavaServerAppPackaging)
+
 name := "show-tix"
 
 version := "0.1"
