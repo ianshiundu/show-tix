@@ -11,13 +11,13 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
 trait Startup extends RequestTimeout {
-  def startup(api: Route)(implicit system: ActorSystem)= {
+  def startup(api: Route)(implicit system: ActorSystem): Unit = {
     val host = system.settings.config.getString("http.host") // Gets the host and a port from the configuration
     val port = system.settings.config.getInt("http.port")
     startHttpServer(api, host, port)
   }
 
-  def startHttpServer(api: Route, host: String, port: Int)(implicit system: ActorSystem) = {
+  def startHttpServer(api: Route, host: String, port: Int)(implicit system: ActorSystem): Unit = {
     implicit val ec: ExecutionContextExecutor = system.dispatcher  // bindingFuture.map requires an implicit ExecutionContext
     implicit val materializer: ActorMaterializer = ActorMaterializer()  // bindAndHandle requires an implicit materializer
     val bindingFuture: Future[ServerBinding] = Http().bindAndHandle(api, host, port) // start HTTP server
