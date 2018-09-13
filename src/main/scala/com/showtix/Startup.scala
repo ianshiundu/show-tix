@@ -25,7 +25,7 @@ trait Startup extends RequestTimeout {
     val log = Logging(system.eventStream, "show-tix")
 
     bindingFuture.map{ serverBinding ⇒ log.info(s"RestApi bound to ${serverBinding.localAddress}") }.onComplete {
-      case Success(_) ⇒ log.info("Server successfully started")
+      case Success(_) ⇒ log.info(s"Server successfully started at {}:{}", host, port)
       case Failure(e) ⇒
         log.error(e, "Failed to bind to {}:{}!", host, port)
         system.terminate()
