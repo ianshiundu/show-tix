@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
 trait Startup extends RequestTimeout {
   def startup(api: Route)(implicit system: ActorSystem)= {
@@ -22,17 +23,13 @@ trait Startup extends RequestTimeout {
     val bindingFuture: Future[ServerBinding] = Http().bindAndHandle(api, host, port) // start HTTP server
 
     val log = Logging(system.eventStream, "show-tix")
-    try {
-      //    Here we start the HTTP server and log the info
-      bindingFuture.map { serverBinding ⇒
-        log.info(s"RestApi bound to ${serverBinding.localAddress}")
-      }
-    }catch {
-      //    If the HTTP server fails to start, we throw an Exception and log the error and close the system
-      case ex: Exception ⇒
-        log.error(ex, "Failed to bind to {}:{}!", host, port)
-        //      System shutdown
+
+    bindingFuture.map{ serverBinding ⇒ log.info(s"RestApi bound to ${serverBinding.localAddress}") }.onComplete {
+      case Success(_) ⇒ log.info("Server successfully started")
+      case Failure(e) ⇒ {
+        log.error(e, "Failed to bind to {}:{}!", host, port)
         system.terminate()
+      }
     }
   }
 
