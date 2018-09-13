@@ -26,10 +26,9 @@ trait Startup extends RequestTimeout {
 
     bindingFuture.map{ serverBinding ⇒ log.info(s"RestApi bound to ${serverBinding.localAddress}") }.onComplete {
       case Success(_) ⇒ log.info("Server successfully started")
-      case Failure(e) ⇒ {
+      case Failure(e) ⇒
         log.error(e, "Failed to bind to {}:{}!", host, port)
         system.terminate()
-      }
     }
   }
 
