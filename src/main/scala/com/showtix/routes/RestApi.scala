@@ -49,7 +49,7 @@ trait RestRoutes extends CoachellaApi with EventMarshaller {
         // GET show-tix/v1/events
         pathEndOrSingleSlash {
           onSuccess(getEvents()) { events ⇒
-            complete(OK, events)
+            complete(StatusCodes.OK, events)
           }
         }
       }
